@@ -1,11 +1,11 @@
-import { ActionIcon, Group, useMantineColorScheme } from '@mantine/core';
-import { SunIcon, MoonIcon } from '@modulz/radix-icons';
+import { ActionIcon, Group, useMantineColorScheme } from '@mantine/core'
+import { SunIcon, MoonIcon } from '@modulz/radix-icons'
 
 export function ColorSchemeToggle() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
 
   return (
-    <Group position="center" mt="xl">
+    <Group position="center">
       <ActionIcon
         onClick={() => toggleColorScheme()}
         size="xl"
@@ -22,5 +22,5 @@ export function ColorSchemeToggle() {
         )}
       </ActionIcon>
     </Group>
-  );
+  )
 }
