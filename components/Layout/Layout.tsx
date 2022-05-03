@@ -12,10 +12,13 @@ import {
   Group,
 } from '@mantine/core'
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle'
+import { useAuth } from '../../context/AuthContext'
 
 const Layout: React.FC = ({ children }) => {
   const [opened, setOpened] = useState(false)
   const theme = useMantineTheme()
+  const authData = useAuth()
+  const { user, githubSignInWithPopup, googleSignInWithPopup, signOut } = authData || {}
 
   return (
     <AppShell
@@ -89,33 +92,58 @@ const Layout: React.FC = ({ children }) => {
                       HomePage
                     </Button>
                   </Link>
-                  <Link href="/dashboard" passHref>
-                    <Button
-                      component="a"
-                      size="md"
-                      variant="subtle"
-                      styles={() => ({
-                        root: {
-                          paddingLeft: 4,
-                          paddingRight: 16,
-                          '&:hover': {
-                            backgroundColor: '#00000000',
-                            textDecoration: 'underline',
-                          },
-                        },
-                      })}
-                    >
-                      Dashboard
-                    </Button>
-                  </Link>
 
-                  <Button component="a" size="md" variant="outline">
-                    Sign in with Google
-                  </Button>
+                  {user ? (
+                    <>
+                      <Link href="/dashboard" passHref>
+                        <Button
+                          component="a"
+                          size="md"
+                          variant="subtle"
+                          styles={() => ({
+                            root: {
+                              paddingLeft: 4,
+                              paddingRight: 16,
+                              '&:hover': {
+                                backgroundColor: '#00000000',
+                                textDecoration: 'underline',
+                              },
+                            },
+                          })}
+                        >
+                          Dashboard
+                        </Button>
+                      </Link>
+                      <Button
+                        component="a"
+                        size="md"
+                        variant="outline"
+                        onClick={() => user && signOut && signOut()}
+                      >
+                        Sign Out
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        component="a"
+                        size="md"
+                        variant="outline"
+                        onClick={() => !user && googleSignInWithPopup && googleSignInWithPopup()}
+                      >
+                        Sign in with Google
+                      </Button>
 
-                  <Button component="a" size="md">
-                    Sign in with Github
-                  </Button>
+                      <Button
+                        component="a"
+                        size="md"
+                        variant="outline"
+                        onClick={() => !user && githubSignInWithPopup && githubSignInWithPopup()}
+                      >
+                        Sign in with Github
+                      </Button>
+                    </>
+                  )}
                 </Group>
               </MediaQuery>
 
