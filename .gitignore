@@ -25,7 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-config/firebase.ts
 .env
 .env.local
 .env.development.local
@@ -38,3 +37,6 @@ config/firebase.ts
 
 # storybook
 storybook-static
+
+#firebase 
+config/firebase.ts
