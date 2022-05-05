@@ -8,18 +8,18 @@ import {
 } from 'firebase/auth'
 import { auth } from '../config/firebase'
 
-interface AuthContextInterface {
+interface ContextInterface {
   user: User | null
   githubSignInWithPopup: () => Promise<void>
   googleSignInWithPopup: () => Promise<void>
   signOut: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextInterface | null>(null)
+const Context = createContext<ContextInterface | null>(null)
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(Context)
 
-export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   // console.log(user, loading)
@@ -70,8 +70,8 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   }
 
   return (
-    <AuthContext.Provider value={{ user, githubSignInWithPopup, googleSignInWithPopup, signOut }}>
+    <Context.Provider value={{ user, githubSignInWithPopup, googleSignInWithPopup, signOut }}>
       {loading ? null : children}
-    </AuthContext.Provider>
+    </Context.Provider>
   )
 }

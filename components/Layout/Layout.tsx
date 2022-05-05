@@ -10,15 +10,18 @@ import {
   Title,
   Button,
   Group,
+  Navbar,
 } from '@mantine/core'
+// import { useClickOutside } from '@mantine/hooks'
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/Context'
 
 const Layout: React.FC = ({ children }) => {
   const [opened, setOpened] = useState(false)
   const theme = useMantineTheme()
   const authData = useAuth()
   const { user, githubSignInWithPopup, googleSignInWithPopup, signOut } = authData || {}
+  // const ref = useClickOutside(() => setOpened(false))
 
   return (
     <AppShell
@@ -151,6 +154,92 @@ const Layout: React.FC = ({ children }) => {
             </Group>
           </div>
         </Header>
+      }
+      navbar={
+        opened ? (
+          <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+            <Navbar width={{ base: 250 }} p="xs" fixed>
+              <Group
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'space-evenly',
+                }}
+              >
+                <Link href="/" passHref>
+                  <Button
+                    component="a"
+                    size="md"
+                    variant="subtle"
+                    styles={() => ({
+                      root: {
+                        '&:hover': {
+                          backgroundColor: '#00000000',
+                          textDecoration: 'underline',
+                        },
+                      },
+                    })}
+                  >
+                    HomePage
+                  </Button>
+                </Link>
+
+                {user ? (
+                  <>
+                    <Link href="/dashboard" passHref>
+                      <Button
+                        component="a"
+                        size="md"
+                        variant="subtle"
+                        styles={() => ({
+                          root: {
+                            '&:hover': {
+                              backgroundColor: '#00000000',
+                              textDecoration: 'underline',
+                            },
+                          },
+                        })}
+                      >
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Button
+                      component="a"
+                      size="md"
+                      variant="outline"
+                      onClick={() => user && signOut && signOut()}
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      component="a"
+                      size="md"
+                      variant="outline"
+                      onClick={() => !user && googleSignInWithPopup && googleSignInWithPopup()}
+                    >
+                      Sign in with Google
+                    </Button>
+
+                    <Button
+                      component="a"
+                      size="md"
+                      variant="outline"
+                      onClick={() => !user && githubSignInWithPopup && githubSignInWithPopup()}
+                    >
+                      Sign in with Github
+                    </Button>
+                  </>
+                )}
+              </Group>
+            </Navbar>
+          </MediaQuery>
+        ) : (
+          <></>
+        )
       }
     >
       {children}
