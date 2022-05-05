@@ -6,9 +6,11 @@ import {
   GoogleAuthProvider,
   User,
 } from 'firebase/auth'
-import { auth } from '../config/firebase'
+import { getDoc, doc, collection, setDoc } from 'firebase/firestore'
+import { auth, firestore } from '../config/firebase'
 
 interface ContextInterface {
+  dbUser: any
   user: User | null
   githubSignInWithPopup: () => Promise<void>
   googleSignInWithPopup: () => Promise<void>
@@ -20,16 +22,38 @@ const Context = createContext<ContextInterface | null>(null)
 export const useAuth = () => useContext(Context)
 
 export const ContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const [dbUser, setDbUser] = useState<any>(null)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   // console.log(user, loading)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         setUser(authUser)
+        const docRef = doc(firestore, 'users', authUser.uid)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          setDbUser(docSnap.data())
+        } else {
+          // add user to DB
+
+          await setDoc(doc(collection(firestore, 'users'), authUser.uid), {
+            displayName: authUser.displayName,
+            email: authUser.email,
+            photoURL: authUser.photoURL,
+            uid: authUser.uid,
+          })
+          setDbUser({
+            uid: authUser.uid,
+            displayName: authUser.displayName,
+            email: authUser.email,
+            photoURL: authUser.photoURL,
+          })
+        }
       } else {
         setUser(null)
+        setDbUser(null)
       }
       setLoading(false)
     })
@@ -70,7 +94,9 @@ export const ContextProvider = ({ children }: { children: React.ReactNode }) => 
   }
 
   return (
-    <Context.Provider value={{ user, githubSignInWithPopup, googleSignInWithPopup, signOut }}>
+    <Context.Provider
+      value={{ dbUser, user, githubSignInWithPopup, googleSignInWithPopup, signOut }}
+    >
       {loading ? null : children}
     </Context.Provider>
   )
