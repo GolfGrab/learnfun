@@ -14,13 +14,13 @@ import {
 } from '@mantine/core'
 // import { useClickOutside } from '@mantine/hooks'
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle'
-import { useAuth } from '../../context/Context'
+import { useDataCTX } from '../../context/Context'
 
 const Layout: React.FC = ({ children }) => {
   const [opened, setOpened] = useState(false)
   const theme = useMantineTheme()
-  const authData = useAuth()
-  const { user, githubSignInWithPopup, googleSignInWithPopup, signOut } = authData || {}
+  const data = useDataCTX()
+  const { user, githubSignInWithPopup, googleSignInWithPopup, signOut } = data || {}
   // const ref = useClickOutside(() => setOpened(false))
 
   return (

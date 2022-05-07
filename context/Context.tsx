@@ -6,12 +6,13 @@ import {
   GoogleAuthProvider,
   User,
 } from 'firebase/auth'
-import { getDoc, doc, collection, setDoc } from 'firebase/firestore'
+import { getDoc, getDocs, doc, collection, setDoc } from 'firebase/firestore'
 import { auth, firestore } from '../config/firebase'
 
 interface ContextInterface {
   dbUser: any
   user: User | null
+  getActivities: any
   githubSignInWithPopup: () => Promise<void>
   googleSignInWithPopup: () => Promise<void>
   signOut: () => Promise<void>
@@ -19,13 +20,12 @@ interface ContextInterface {
 
 const Context = createContext<ContextInterface | null>(null)
 
-export const useAuth = () => useContext(Context)
+export const useDataCTX = () => useContext(Context)
 
 export const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [dbUser, setDbUser] = useState<any>(null)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  // console.log(user, loading)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
@@ -93,9 +93,15 @@ export const ContextProvider = ({ children }: { children: React.ReactNode }) => 
     await auth.signOut()
   }
 
+  const getActivities = async () => {
+    const querySnapshot = await getDocs(collection(firestore, 'activities'))
+    const activities = [querySnapshot.docs.map((act) => ({ ...act.data(), id: act.id }))]
+    return activities
+  }
+
   return (
     <Context.Provider
-      value={{ dbUser, user, githubSignInWithPopup, googleSignInWithPopup, signOut }}
+      value={{ dbUser, user, githubSignInWithPopup, googleSignInWithPopup, signOut, getActivities }}
     >
       {loading ? null : children}
     </Context.Provider>

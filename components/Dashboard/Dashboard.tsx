@@ -4,12 +4,12 @@ import { collection, doc, setDoc } from 'firebase/firestore'
 import Image from 'next/image'
 // import React, { useState } from 'react'
 import { firestore } from '../../config/firebase'
-import { useAuth } from '../../context/Context'
+import { useDataCTX } from '../../context/Context'
 
 const Dashboard = () => {
-  const authData = useAuth()
-  const user = authData?.user
-  const dbUser = authData?.dbUser
+  const data = useDataCTX()
+  const user = data?.user
+  const dbUser = data?.dbUser
   // const [dpn, setDpn] = useState(dbUser?.displayName || '')
 
   const form = useForm({
